@@ -1,0 +1,7 @@
+---
+config:
+  reload:
+    automatic: true
+
+path:
+  config: /src/logstash.config
