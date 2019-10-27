@@ -1,7 +1,9 @@
+include ../make-help/Makefile
+
 logstash-version?=7.3.2
 
 .PHONY: logstash-server
-logstash-server:
+logstash-server: ## Run logstash server
 	docker run \
 		--rm \
 		-p 8080:8080 \
@@ -11,7 +13,7 @@ logstash-server:
 			--path.settings /src
 
 .PHONY: shell
-shell:
+shell: ## Start interactive shell session inside the container
 	docker run \
 		--rm \
 		-v $(shell pwd):/src \
