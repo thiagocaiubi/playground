@@ -9,7 +9,7 @@ logstash-server: ## Run logstash server
 		-p 8080:8080 \
 		-v $(shell pwd):/src \
 		-w /src \
-		-it docker.elastic.co/logstash/logstash:7.3.2 \
+		-it docker.elastic.co/logstash/logstash:${logstash-version} \
 			--path.settings /src
 
 .PHONY: shell
@@ -18,6 +18,5 @@ shell: ## Start interactive shell session inside the container
 		--rm \
 		-v $(shell pwd):/src \
 		-w /src \
-		-it docker.elastic.co/logstash/logstash:7.3.2 \
+		-it docker.elastic.co/logstash/logstash:${logstash-version} \
 			/bin/bash
-
