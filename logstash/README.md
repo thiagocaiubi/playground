@@ -1,4 +1,4 @@
-# Logstash Playground
+# logstash
 
 Play around with logstash configurations.
 
