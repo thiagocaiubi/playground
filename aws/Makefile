@@ -14,6 +14,6 @@ shell: ## Start interactive shell session inside the container
 		-e AWS_SECRET_ACCESS_KEY \
 		--rm \
 		-v $(shell pwd):/src \
-		-w /src \
+		-w /src/terraform \
 		-it $(image) \
 			/bin/bash
