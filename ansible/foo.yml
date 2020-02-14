@@ -1,0 +1,12 @@
+---
+- name: Create foo file
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: create file
+      file:
+        path: /tmp/foo.conf
+        mode: '0644'
+        state: touch
+
