@@ -1,0 +1,5 @@
+FROM thiagocaiubi/base-image:latest as base
+
+FROM alpine
+COPY --from=base /files /files
+COPY ./dist-files /files
