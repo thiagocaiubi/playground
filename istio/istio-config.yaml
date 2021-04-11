@@ -1,0 +1,13 @@
+---
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  meshConfig:
+    accessLogFile: /dev/stdout
+  components:
+    pilot:
+      k8s:
+        resources:
+          requests:
+            cpu: 1m
+            memory: 1Mi
