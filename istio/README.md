@@ -25,7 +25,7 @@ istioctl apply --filename istio-config.yaml --skip-confirmation
 ```
 
 ```console
-kubectl apply --filename httpbin.yaml
+kubectl apply --filename home.yaml --filename httpbin.yaml --filename ingress.yaml
 ```
 
 ```console
