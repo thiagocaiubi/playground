@@ -37,6 +37,11 @@ spec:
         name: httpbin
         ports:
         - containerPort: 80
+        env:
+        - name: APPLICATION_ROOT
+          value: /httpbin
+        - name: SCRIPT_NAME
+          value: /httpbin
 ---
 apiVersion: v1
 kind: Service
@@ -49,43 +54,6 @@ metadata:
 spec:
   ports:
   - name: http
-    port: 8000
-    targetPort: 80
+    port: 80
   selector:
     app: httpbin
----
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: httpbin-gateway
-  namespace: httpbin
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - "*"
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: httpbin
-  namespace: httpbin
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - httpbin-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /
-    route:
-    - destination:
-        host: httpbin
-        port:
-          number: 8000
