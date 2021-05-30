@@ -57,7 +57,7 @@ Establish a tunnel between minikube and the host machine:
 minikube tunnel
 ```
 
-Edit /etc/hosts with:
+Edit `/etc/hosts` with:
 
 ```
 127.0.0.1 istio-okta.local
