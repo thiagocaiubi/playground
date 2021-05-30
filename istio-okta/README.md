@@ -16,7 +16,6 @@ on minikube.
 
 Create Okta API token, follow the instructions
 [here](https://developer.okta.com/docs/guides/create-an-api-token/overview/).
-
 Then, find your organization name and domain, follow the instructions
 [here](https://developer.okta.com/docs/guides/find-your-domain/findorg/).
 
@@ -33,7 +32,7 @@ Install istio in the cluster:
 istioctl apply --filename ./k8s/01-istio-config/istio-config.yaml --skip-confirmation
 ```
 
-Configure okta and some kubernetes resources. In the [./terraform]() directory:
+Configure okta and some kubernetes resources. In the [./terraform](./terraform) directory:
 
 ```console
 terraform init && \
@@ -42,7 +41,7 @@ terraform init && \
     terraform apply
 ```
 
-Configure reamining kubernetes resources:
+Configure remaining kubernetes resources:
 
 ```console
 kubectl apply \
