@@ -37,33 +37,33 @@ resource "kubernetes_config_map" "oauth2_proxy" {
 
     login_url = format(
       "https://%s.%s/oauth2/default/v1/authorize",
-      local.okta_org_name,
-      local.okta_base_url
+      var.okta_org_name,
+      var.okta_base_url
     )
 
     oidc_issuer_url = format(
       "https://%s.%s/oauth2/default",
-      local.okta_org_name,
-      local.okta_base_url
+      var.okta_org_name,
+      var.okta_base_url
     )
 
     oidc_jwks_url = format(
       "https://%s.%s/oauth2/default/.well-known/oauth-authorization-server?client_id=%s",
-      local.okta_org_name,
-      local.okta_base_url,
+      var.okta_org_name,
+      var.okta_base_url,
       okta_app_oauth.sso.client_id
     )
 
     redeem_url = format(
       "https://%s.%s/oauth2/default/v1/token",
-      local.okta_org_name,
-      local.okta_base_url
+      var.okta_org_name,
+      var.okta_base_url
     )
 
     validate_url = format(
       "https://%s.%s/oauth2/default/v1/userinfo",
-      local.okta_org_name,
-      local.okta_base_url
+      var.okta_org_name,
+      var.okta_base_url
     )
   }
 }
