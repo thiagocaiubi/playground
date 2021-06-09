@@ -4,6 +4,9 @@ Secure istio with okta and
 [oauth2-proxy](https://oauth2-proxy.github.io/oauth2-proxy/)
 on minikube.
 
+This sample explores Istio's External Authorization, Request Authentication and
+Authorizaion Policies.
+
 ## Prerequisites
 
  - [GNU Make](https://www.gnu.org/software/make/)
