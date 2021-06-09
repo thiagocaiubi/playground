@@ -111,3 +111,19 @@ spec:
     port: 80
   selector:
     app: home
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: home
+  namespace: home
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: home
+  rules:
+  - from:
+    - source:
+        namespaces: ["istio-system"]
+        principals: ["cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"]
