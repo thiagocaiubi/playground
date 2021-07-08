@@ -10,8 +10,8 @@ resource "kubernetes_namespace" "sso" {
 }
 
 resource "random_password" "oauth2_proxy_cookie_secret" {
-  length  = 16
-  special = true
+  length           = 32
+  override_special = "-_"
 }
 
 resource "kubernetes_secret" "oauth2_proxy" {
