@@ -1,18 +1,47 @@
 package main
 
 import (
-	"fmt"
+	"context"
+	"log"
 	"net/http"
-	"net/http/httputil"
+	"os"
+	"os/signal"
+	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/thiagocaiubi/docker-golang/handler"
 )
 
 func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		req, _ := httputil.DumpRequest(r, false)
-		fmt.Print(string(req))
+	wait := 15 * time.Second
 
-		fmt.Fprint(w, "ok\n")
-	})
+	r := mux.NewRouter()
+	r.HandleFunc("/", handler.HomeHandler)
+	http.Handle("/", r)
 
-	http.ListenAndServe(":8080", nil)
+	srv := &http.Server{
+		Addr:         "0.0.0.0:8080",
+		WriteTimeout: time.Second * 15,
+		ReadTimeout:  time.Second * 15,
+		IdleTimeout:  time.Second * 60,
+		Handler:      r,
+	}
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			log.Println(err)
+		}
+	}()
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+
+	<-c
+
+	ctx, cancel := context.WithTimeout(context.Background(), wait)
+	defer cancel()
+
+	srv.Shutdown(ctx)
+	log.Println("shutting down")
+	os.Exit(0)
 }
