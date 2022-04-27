@@ -1,0 +1,129 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: home
+  labels:
+    name: home
+    istio-injection: enabled
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: html
+  namespace: home
+data:
+  index.html: |
+    <!doctype html>
+    <html lang=en>
+      <head>
+        <meta charset="utf-8">
+        <title>istio</title>
+      </head>
+      <body>
+        <h1>istio</h1>
+        <ul>
+          <li><a href="/httpbin/">httpbin</a></li>
+          <li><a href="/oauth2/sign_out">sign out</a></li>
+        </ul>
+      </body>
+    </html>
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config
+  namespace: home
+data:
+  default.conf: |
+    server {
+      listen       80;
+      server_name  localhost;
+
+      location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+
+        add_header Last-Modified $date_gmt;
+        add_header Cache-Control 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
+        if_modified_since off;
+        expires off;
+        etag off;
+      }
+    }
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: home
+  namespace: home
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: home
+  namespace: home
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: home
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: home
+        version: v1
+    spec:
+      serviceAccountName: home
+      containers:
+      - image: nginx:stable-alpine
+        imagePullPolicy: IfNotPresent
+        name: home
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html
+          mountPath: "/usr/share/nginx/html/"
+          readOnly: true
+        - name: config
+          mountPath: "/etc/nginx/conf.d/"
+          readOnly: true
+      volumes:
+      - name: html
+        configMap:
+          name: html
+      - name: config
+        configMap:
+          name: config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: home
+  namespace: home
+  labels:
+    app: home
+    service: home
+spec:
+  ports:
+  - name: http
+    port: 80
+  selector:
+    app: home
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: home
+  namespace: home
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: home
+  rules:
+  - from:
+    - source:
+        namespaces: ["istio-system"]
+        principals: ["cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"]

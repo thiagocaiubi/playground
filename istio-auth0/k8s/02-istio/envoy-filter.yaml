@@ -1,0 +1,81 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: ext-authz-filter
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      app: istio-ingressgateway
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: GATEWAY
+        listener:
+          filterChain:
+            filter:
+              name: "envoy.filters.network.http_connection_manager"
+              subFilter:
+                name: "envoy.filters.http.router"
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: envoy.filters.http.ext_authz
+          typed_config:
+            "@type": "type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz"
+            http_service:
+              server_uri:
+                uri: http://oauth2-proxy.sso.svc.cluster.local:80
+                cluster: outbound|80||oauth2-proxy.sso.svc.cluster.local
+                timeout:  3s
+              authorization_request:
+                allowed_headers:
+                  patterns:
+                  - exact: accept
+                  - exact: cookie
+                  - exact: x-auth-request-redirect
+              authorization_response:
+                allowed_upstream_headers:
+                  patterns:
+                  - exact: authorization
+                  - exact: x-auth-request-access-token
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: disable-ext-authz-filter
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      app: istio-ingressgateway
+  configPatches:
+    - applyTo: HTTP_ROUTE
+      match:
+        context: GATEWAY
+        routeConfiguration:
+          vhost:
+            route:
+              name: oauth2-proxy-public
+      patch:
+        operation: MERGE
+        value:
+          typed_per_filter_config:
+            envoy.filters.http.ext_authz:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
+              disabled: true
+    - applyTo: HTTP_ROUTE
+      match:
+        context: GATEWAY
+        routeConfiguration:
+          vhost:
+            route:
+              name: oauth2-proxy-sign-out-public
+      patch:
+        operation: MERGE
+        value:
+          typed_per_filter_config:
+            envoy.filters.http.ext_authz:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthzPerRoute
+              disabled: true
