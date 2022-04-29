@@ -14,7 +14,7 @@ spec:
     pilot:
       enabled: true
       k8s:
-        replicaCount: 2
+        replicaCount: 1
         resources:
           requests:
             cpu: 1m
@@ -23,9 +23,9 @@ spec:
     - name: istio-ingressgateway
       enabled: true
       k8s:
-        replicaCount: 2
+        replicaCount: 1
     egressGateways:
     - name: istio-egressgateway
       enabled: true
       k8s:
-        replicaCount: 2
+        replicaCount: 1
