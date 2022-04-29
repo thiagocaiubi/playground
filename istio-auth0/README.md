@@ -1,11 +1,8 @@
 # istio-auth0
 
-Secure istio with auth0 and
-[oauth2-proxy](https://oauth2-proxy.github.io/oauth2-proxy/)
-on minikube.
+Secure a Single Page Application (SPA) with Istio and Auth0 on minikube.
 
-This sample explores Istio's External Authorization, Request Authentication and
-Authorizaion Policies.
+This sample explores Request Authentication and Authorizaion Policies.
 
 ## Prerequisites
 
@@ -13,15 +10,11 @@ Authorizaion Policies.
  - [Docker](https://www.docker.com/)
  - [Minikube](https://minikube.sigs.k8s.io/)
  - [Istioctl](https://istio.io/latest/docs/setup/install/istioctl/)
- - [Okta](https://www.auth0.com)
+ - [Auth0](https://www.auth0.com)
 
 # Steps
 
-Create Okta API token, follow the instructions
-[here](https://developer.okta.com/docs/guides/create-an-api-token/overview/).
-Then, find your organization name and domain, follow the instructions
-[here](https://developer.okta.com/docs/guides/find-your-domain/findorg/).
-
+TODO: add docs regarding Auth0 Management API configuration.
 
 Start minikube:
 
@@ -35,12 +28,12 @@ Install istio in the cluster:
 istioctl apply --filename ./k8s/01-istio-config/istio-config.yaml --skip-confirmation
 ```
 
+TODO: add docs regarding the .env configuration.
+
 Configure auth0 and some kubernetes resources. In the [./terraform](./terraform) directory:
 
 ```console
 terraform init && \
-    TF_VAR_auth0_api_token=<token> \
-    TF_VAR_auth0_org_name=<org name> \
     terraform apply
 ```
 
@@ -49,9 +42,8 @@ Configure remaining kubernetes resources:
 ```console
 kubectl apply \
     --filename ./k8s/02-istio \
-    --filename ./k8s/03-sso \
-    --filename ./k8s/04-home \
-    --filename ./k8s/05-httpbin
+    --filename ./k8s/03-auth0-spa \
+    --filename ./k8s/04-http-dump
 ```
 
 Establish a tunnel between minikube and the host machine:
@@ -60,16 +52,14 @@ Establish a tunnel between minikube and the host machine:
 minikube tunnel
 ```
 
-Edit `/etc/hosts` with:
-
-```
-127.0.0.1 istio-auth0.local
-```
-
-Navigate to [http://istio-auth0.local]()
+Navigate to [http://localhost]()
 
 Clean up:
 
 ```
 minikube delete
+```
+
+```
+cd ./terraform && terraform destroy
 ```
