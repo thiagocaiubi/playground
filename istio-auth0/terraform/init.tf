@@ -1,18 +1,14 @@
 terraform {
   required_providers {
-    okta = {
-      source  = "oktadeveloper/okta"
+    auth0 = {
+      source = "auth0/auth0"
     }
   }
 }
 
-provider "okta" {
-  org_name  = var.okta_org_name
-  base_url  = var.okta_base_url
-  api_token = var.okta_api_token
-}
-
-provider "kubernetes" {
-  config_path    = "~/.kube/config"
-  config_context = "minikube"
+provider "auth0" {
+  domain        = local.env.auth0_domain
+  client_id     = local.env.auth0_client_id
+  client_secret = local.env.auth0_client_secret
+  debug         = true
 }
