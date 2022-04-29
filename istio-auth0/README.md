@@ -16,6 +16,9 @@ This sample explores Request Authentication and Authorizaion Policies.
 
 TODO: add docs regarding Auth0 Management API configuration.
 
+Copy the `./terraform/.env.sample` to `./terraform/.env` and change the values
+to match the ones you have configured in your Auth0 tenant.
+
 Start minikube:
 
 ```console
@@ -27,8 +30,6 @@ Install istio in the cluster:
 ```console
 istioctl apply --filename ./k8s/01-istio-config/istio-config.yaml --skip-confirmation
 ```
-
-TODO: add docs regarding the .env configuration.
 
 Configure auth0 and some kubernetes resources. In the [./terraform](./terraform) directory:
 
