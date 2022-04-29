@@ -1,0 +1,71 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: auth0-spa
+  labels:
+    name: auth0-spa
+    istio-injection: enabled
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: auth0-spa
+  namespace: auth0-spa
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth0-spa
+  namespace: auth0-spa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth0-spa
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: auth0-spa
+        version: v1
+    spec:
+      serviceAccountName: auth0-spa
+      containers:
+      - image: thiagocaiubi/auth0-spa:v0.1.0
+        imagePullPolicy: Always
+        name: auth0-spa
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth0-spa
+  namespace: auth0-spa
+  labels:
+    app: auth0-spa
+    service: auth0-spa
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 3000
+  selector:
+    app: auth0-spa
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: auth0-spa
+  namespace: auth0-spa
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: auth0-spa
+  rules:
+  - from:
+    - source:
+        namespaces: ["istio-system"]
+        principals: ["cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"]

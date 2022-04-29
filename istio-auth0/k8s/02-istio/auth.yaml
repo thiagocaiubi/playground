@@ -8,12 +8,3 @@ metadata:
 spec:
   mtls:
     mode: STRICT
----
-# mesh wide config: deny all traffic in the first place
-# apiVersion: security.istio.io/v1beta1
-# kind: AuthorizationPolicy
-# metadata:
-#   namespace: istio-system
-#   name: deny-all
-# spec:
-#   {}

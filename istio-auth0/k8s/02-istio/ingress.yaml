@@ -34,47 +34,21 @@ spec:
   gateways:
   - gateway
   http:
-  - name: oauth2-proxy-sign-out-public
+  - name: http-dump-private
     match:
     - uri:
-        prefix: /oauth2/sign_out
-    headers:
-      request:
-        set:
-          x-auth-request-redirect: "https://dev-27550695.okta.com/login/signout?fromURI=http://istio-okta.local"
+        prefix: /http-dump
     route:
     - destination:
-        host: oauth2-proxy.sso.svc.cluster.local
+        host: http-dump.http-dump.svc.cluster.local
         port:
-          number: 80
-  - name: oauth2-proxy-public
-    match:
-    - uri:
-        prefix: /oauth2/callback
-    - uri:
-        prefix: /oauth2/sign_in
-    - uri:
-        prefix: /oauth2/start
-    route:
-    - destination:
-        host: oauth2-proxy.sso.svc.cluster.local
-        port:
-          number: 80
-  - name: httpbin-protected
-    match:
-    - uri:
-        prefix: /httpbin/
-    route:
-    - destination:
-        host: httpbin.httpbin.svc.cluster.local
-        port:
-          number: 80
-  - name: home-public
+          number: 8080
+  - name: auth0-spa-public
     match:
     - uri:
         prefix: /
     route:
     - destination:
-        host: home.home.svc.cluster.local
+        host: auth0-spa.auth0-spa.svc.cluster.local
         port:
-          number: 80
+          number: 8080
