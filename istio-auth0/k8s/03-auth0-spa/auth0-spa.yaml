@@ -32,7 +32,7 @@ spec:
     spec:
       serviceAccountName: auth0-spa
       containers:
-      - image: thiagocaiubi/auth0-spa:v0.1.0
+      - image: thiagocaiubi/auth0-spa:latest
         imagePullPolicy: Always
         name: auth0-spa
         ports:
