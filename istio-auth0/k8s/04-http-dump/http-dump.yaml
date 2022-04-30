@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: http-dump
+  labels:
+    name: http-dump
+    istio-injection: enabled
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: http-dump
+  namespace: http-dump
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: http-dump
+  namespace: http-dump
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: http-dump
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: http-dump
+        version: v1
+    spec:
+      serviceAccountName: http-dump
+      containers:
+      - image: daime/http-dump:latest
+        imagePullPolicy: Always
+        name: http-dump
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: http-dump
+  namespace: http-dump
+  labels:
+    app: http-dump
+    service: http-dump
+spec:
+  ports:
+  - name: http
+    port: 8080
+  selector:
+    app: http-dump
+---
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: http-dump
+  namespace: http-dump
+spec:
+  selector:
+    matchLabels:
+      app: http-dump
+  jwtRules:
+  - audiences: ["https://sso.caiubi.com"]
+    forwardOriginalToken: true
+    issuer: https://dev-istio-auth0.us.auth0.com/
+    jwksUri: https://dev-istio-auth0.us.auth0.com/.well-known/jwks.json
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: http-dump
+  namespace: http-dump
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app: http-dump
+  rules:
+  - from:
+    - source:
+        namespaces: ["istio-system"]
+        principals: ["cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"]
+    when:
+      - key: request.auth.claims[permissions]
+        values: ["read:http-dump"]

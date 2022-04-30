@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ingress
+  labels:
+    name: ingress
+    istio-injection: disabled
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway
+  namespace: ingress
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: virtualservice
+  namespace: ingress
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - gateway
+  http:
+  - name: http-dump-private
+    match:
+    - uri:
+        prefix: /http-dump
+    route:
+    - destination:
+        host: http-dump.http-dump.svc.cluster.local
+        port:
+          number: 8080
+  - name: auth0-spa-public
+    match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: auth0-spa.auth0-spa.svc.cluster.local
+        port:
+          number: 8080
