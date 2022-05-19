@@ -24,6 +24,8 @@ kubectl apply --filename k8s/greeter-k8s.template.yaml \
     --filename k8s/greeter-istio-virtualservice.yaml \
     --filename k8s/greeter-istio-destinationrule.yaml
 
+kubectl create namespace client
+
 kubectl run -n client --rm -i --tty  --image=thiagocaiubi/grpc-greeter-go-client -- bash
 ```
 
