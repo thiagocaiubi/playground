@@ -33,8 +33,8 @@ Inside the container:
 
 ```console
 # call service directly
-go run client.go -insecure=true -address=greeter.default.svc.cluster.local
+go run client.go -insecure=true -address=greeter.default.svc.cluster.local:8080
 
 # call the istio gateway
-go run client.go -insecure=true -address=istio-ingressgateway.istio-system.svc.cluster.local
+go run client.go -insecure=true -address=istio-ingressgateway.istio-system.svc.cluster.local:80
 ```
