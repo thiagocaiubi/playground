@@ -1,6 +1,6 @@
 include ../make-help/Makefile
 
-logstash-version?=7.5.1
+logstash-version?=8.2.0
 
 .PHONY: logstash-server
 logstash-server: ## Run logstash server
