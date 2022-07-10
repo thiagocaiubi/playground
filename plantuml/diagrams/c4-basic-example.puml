@@ -1,0 +1,36 @@
+@startuml c4-basic-example
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' https://github.com/awslabs/aws-icons-for-plantuml
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v13.0/dist
+!include AWSPuml/AWSCommon.puml
+!include AWSPuml/ApplicationIntegration/SimpleQueueService.puml
+!include AWSPuml/Database/ElastiCacheElastiCacheforRedis.puml
+!include AWSPuml/Database/RDS.puml
+
+' https://github.com/tupadr3/plantuml-icon-font-sprites
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define FONTAWESOME https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/font-awesome-5
+!include DEVICONS/go.puml
+!include FONTAWESOME/users.puml
+!include FONTAWESOME/react.puml
+
+Person(user, "Customer", "People that need products", $sprite="users")
+Container(spa, "SPA", "React", "The main interface that the customer interacts with", $sprite="react")
+Container(api, "API", "Go", "Handles all business logic", $sprite="go")
+ContainerDb(db, "Database", "Postgres", "Holds data", $sprite="RDS")
+ContainerDb(cache, "Cache", "Redis", "Holds data", $sprite="ElastiCacheElastiCacheforRedis")
+ContainerQueue(sqs, "Queue", "SQS", "Enqueue messages", $sprite="SimpleQueueService")
+Container(worker, "Worker", "Go", "Consumes messages", $sprite="go")
+
+Lay_D(api, worker)
+ 
+Rel(user, spa, "Uses", "https")
+Rel(spa, api, "Uses", "https")
+Rel(api, db, "Reads/Writes data")
+Rel_R(api, cache, "Caches data")
+Rel_L(api, sqs, "Produces messages")
+Rel_L(worker, sqs, "Consumes messages")
+Rel_R(worker, db, "Writes data")
+
+@enduml
