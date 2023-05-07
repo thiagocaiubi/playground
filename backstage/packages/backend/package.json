@@ -19,7 +19,7 @@
   "dependencies": {
     "app": "0.0.0",
     "@backstage/backend-common": "^0.8.2",
-    "@backstage/catalog-model": "^0.8.2",
+    "@backstage/catalog-model": "^1.2.0",
     "@backstage/catalog-client": "^0.3.13",
     "@backstage/config": "^0.1.5",
     "@backstage/plugin-app-backend": "^0.3.13",
